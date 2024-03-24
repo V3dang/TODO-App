@@ -1,9 +1,8 @@
-import'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:todo/models/todo_model.dart';
 import 'package:todo/util/todo_list.dart';
 import 'package:todo/util/New_Task.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:todo/data/data.dart';
-
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -13,43 +12,39 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final _myBox = Hive.box('myBox');
-  ToDoDataBase db = ToDoDataBase();
+  List<Todo> todoList = [
+    Todo(todoName: "Make Tutorial", completed: false),
+    Todo(todoName: "Do Exercise", completed: false),
+  ];
 
-  @override
-  void initState() {
-    if (_myBox.get("TODOLIST") == null) {
-      db.createInitialData();
-    } else {
-      db.loadData();
-    }
-    super.initState();
-    }
+  TextEditingController _todoNameController = TextEditingController();
 
-    final _controller = TextEditingController();
-
-  void checkBoxChanged(bool ? value, int index){
+  void checkBoxChanged(bool? value, int index) {
     setState(() {
-      db.tODO_LIST[index][1] = !db.tODO_LIST[index][1];
+      todoList[index].completed = !todoList[index].completed;
     });
-    db.updateDataBase();
   }
 
-  void saveNewTask(){
+  void saveNewTask() {
+    List<Todo> newTodoList = [
+      ...todoList,
+      Todo(completed: false, todoName: _todoNameController.text)
+    ];
     setState(() {
-      db.tODO_LIST.add([_controller.text, false]);
-      _controller.clear();
+      debugPrint("original name ${_todoNameController.text}");
+      todoList = newTodoList;
+      debugPrint("changed name ${_todoNameController.text}");
+      _todoNameController.clear();
     });
     Navigator.of(context).pop();
-    db.updateDataBase();
   }
 
-  void createNewTask(){
+  void createNewTask() {
     showDialog(
       context: context,
       builder: (context) {
         return New_Task(
-          controller: _controller,
+          controller: _todoNameController,
           onSave: saveNewTask,
           onCancel: () => Navigator.of(context).pop(),
         );
@@ -57,11 +52,10 @@ class _HomeState extends State<Home> {
     );
   }
 
-  void deleteTask(int index){
+  void deleteTask(int index) {
     setState(() {
-      db.tODO_LIST.removeAt(index);
+      todoList.removeAt(index);
     });
-    db.updateDataBase();
   }
 
   @override
@@ -78,16 +72,15 @@ class _HomeState extends State<Home> {
         child: Icon(Icons.add),
       ),
       body: ListView.builder(
-          itemCount: db.tODO_LIST.length,
-        itemBuilder: (context, index){
+          itemCount: todoList.length,
+          itemBuilder: (context, index) {
             return TODO_LIST(
-                taskName: db.tODO_LIST[index][0],
-                taskCompleted: db.tODO_LIST[index][1],
-                onChanged: (value) => checkBoxChanged(value, index),
-                deleteFunction: (context) => deleteTask(index),
+              taskName: todoList[index].todoName,
+              taskCompleted: todoList[index].completed,
+              onChanged: (value) => checkBoxChanged(value, index),
+              deleteFunction: (context) => deleteTask(index),
             );
-        }
-      ),
+          }),
     );
   }
 }
