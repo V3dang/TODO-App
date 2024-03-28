@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:todo/pages/home_page.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:todo/pages/splashScreen.dart';
+
 void main() async {
 
   await Hive.initFlutter();
@@ -15,7 +17,7 @@ class TODO extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: Home(),
+      home: splashScreen(),
       theme: ThemeData(primarySwatch: Colors.purple),
     );
   }

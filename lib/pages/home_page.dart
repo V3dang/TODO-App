@@ -13,7 +13,6 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   List<Todo> todoList = [
-    Todo(todoName: "Make Tutorial", completed: false),
     Todo(todoName: "Do Exercise", completed: false),
   ];
 
@@ -61,7 +60,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.purple.shade200,
+      backgroundColor: Color.fromARGB(255, 220, 181, 226),
       appBar: AppBar(
         title: Text('TO DO'),
         centerTitle: true,
